@@ -1,0 +1,88 @@
+📌 Features for Your Blog Platform
+✅ Basic Features:
+
+Users can create, edit, delete, and view blog posts.
+Posts include title, content, and images.
+✅ User Authentication (Optional, but recommended)
+
+Sign up/Login with JWT authentication.
+Users can only edit/delete their own posts.
+✅ Comments & Likes (Optional)
+
+Users can comment on posts.
+Users can like/unlike blog posts.
+
+
+
+
+
+
+
+📌FOLDER STRUCTURE
+blog-platform/
+│── client/  (React - Frontend)
+│── server/  (Node.js + Express - Backend)
+│── models/  (MongoDB Schema)
+│── routes/  (API Routes)
+│── controllers/  (Backend logic)
+│── config/  (Database & auth setup)
+│── .env  (Environment variables)
+
+
+
+
+
+
+
+🛠️ Tech Stack
+Frontend: React + TailwindCSS
+Backend: Node.js + Express
+Database: MongoDB + Mongoose
+Authentication: JWT (JSON Web Token)
+File Uploads: Multer (for images)
+
+
+
+
+
+
+
+
+📝 Steps to Build
+1️⃣ Set up the Backend (Express + MongoDB)
+
+Connect MongoDB using Mongoose
+Define models (User, BlogPost)
+Set up routes (/api/posts, /api/auth)
+2️⃣ Build the Frontend (React + React Router)
+
+Create pages: Home, Create Post, Post Details, Login/Register
+Use axios to call backend APIs
+3️⃣ Implement Authentication (JWT + bcrypt.js)
+
+Hash passwords, generate tokens
+Protect routes with middleware
+4️⃣ Add File Uploads (Multer)
+
+Allow users to upload blog post images
+5️⃣ Deploy the App (Render + Vercel)
+
+Backend → Deploy on Render
+Frontend → Deploy on Vercel
+
+
+
+
+
+
+
+📌DEPENDENCİES
+
+express → Framework for building the backend
+mongoose → ODM for MongoDB
+dotenv → Loads environment variables
+cors → Allows cross-origin requests (needed for frontend communication)
+body-parser → Parses incoming request bodies
+bcryptjs → Hashes passwords for security
+jsonwebtoken (JWT) → Manages authentication
+multer → Handles file uploads (for images)
