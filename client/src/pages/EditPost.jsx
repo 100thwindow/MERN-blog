@@ -1,9 +1,22 @@
-import { useState } from "react";
-import { createPost } from "../api/postApi";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getPosts, updatePost } from "../api/postApi";
 
-const CreatePost = () => {
+const EditPost = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState({ title: "", content: "", author: "" });
-  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      const data = await getPosts();
+      const currentPost = data.find((p) => p._id === id);
+      if (currentPost) {
+        setPost(currentPost);
+      }
+    };
+    fetchPost();
+  }, [id]);
 
   const handleChange = (e) => {
     setPost({ ...post, [e.target.name]: e.target.value });
@@ -11,17 +24,13 @@ const CreatePost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createPost(post);
-    setPost({ title: "", content: "", author: "" }); // Reset form
-    setSuccessMessage("✅ Your post has been created!"); // Show success message
-
-    // Hide message after 3 seconds
-    setTimeout(() => setSuccessMessage(""), 3000);
+    await updatePost(id, post);
+    navigate("/");
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 p-6">
-      <h1 className="text-4xl font-bold text-gray-800 mb-6">Create New Post</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-6">Edit Post</h1>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-2xl bg-white shadow-md rounded-lg p-6 border border-gray-200"
@@ -54,19 +63,13 @@ const CreatePost = () => {
         />
         <button
           type="submit"
-          className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 cursor-pointer"
+          className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition"
         >
-          Create Post
+          Update Post
         </button>
       </form>
-
-      {successMessage && (
-        <p className="mt-4 text-green-600 text-lg font-semibold">
-          {successMessage}
-        </p>
-      )}
     </div>
   );
 };
 
-export default CreatePost;
+export default EditPost;
