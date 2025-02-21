@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { createPost } from "../api/postApi";
+import AuthContext from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const CreatePost = () => {
-  const [post, setPost] = useState({ title: "", content: "", author: "" });
+  const [post, setPost] = useState({ title: "", content: "" });
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext); // Get user context
 
   const handleChange = (e) => {
     setPost({ ...post, [e.target.name]: e.target.value });
@@ -11,12 +16,30 @@ const CreatePost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createPost(post);
-    setPost({ title: "", content: "", author: "" }); // Reset form
-    setSuccessMessage("✅ Your post has been created!"); // Show success message
+    try {
+      if (!user) {
+        setErrorMessage("Please log in to create a post");
+        return;
+      }
 
-    // Hide message after 3 seconds
-    setTimeout(() => setSuccessMessage(""), 3000);
+      const result = await createPost(post);
+      if (result) {
+        setSuccessMessage("✅ Your post has been created!");
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setErrorMessage("Please log in to create a post");
+      } else {
+        setErrorMessage(
+          error.response?.data?.error ||
+            "Error creating post. Please try again."
+        );
+      }
+      console.error("Create post error:", error);
+    }
   };
 
   return (

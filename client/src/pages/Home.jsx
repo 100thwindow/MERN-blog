@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getPosts, deletePost } from "../api/postApi";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
 import Loading from "../components/Loading";
 
 const Home = () => {
@@ -8,7 +9,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [expandedPost, setExpandedPost] = useState(null); // State for tracking which post is expanded
   const navigate = useNavigate();
-  const maxLength = 200;
+  const { user } = useContext(AuthContext);
+  const maxLength = 200; // Maximum length before showing "Show More"
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -22,12 +24,11 @@ const Home = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       await deletePost(id);
-      setPosts(posts.filter((post) => post._id !== id)); // Update UI
+      setPosts(posts.filter((post) => post._id !== id));
     }
   };
 
   const handleExpandedToggle = (postId) => {
-    // Toggle between expanded and collapsed for the post clicked
     setExpandedPost((prevState) => (prevState === postId ? null : postId));
   };
 
@@ -44,7 +45,7 @@ const Home = () => {
         posts.map((post) => (
           <div
             key={post._id}
-            className=" break-words w-full max-w-2xl bg-white shadow-md rounded-lg p-6 border border-gray-200 mb-4 dark:bg-gray-900 over"
+            className="break-words w-full max-w-2xl bg-white shadow-md rounded-lg p-6 border border-gray-200 mb-4 dark:bg-gray-900"
           >
             <h2 className="text-4xl mb-4 font-semibold text-gray-800 dark:text-white">
               {post.title}
@@ -52,7 +53,6 @@ const Home = () => {
             <p
               className={`text-gray-600 dark:text-white break-words ${
                 expandedPost === post._id ? "" : "line-clamp-3"
-              }
               }`}
             >
               {post.content}
@@ -67,24 +67,27 @@ const Home = () => {
               </button>
             )}
 
-            <p className="text-gray-500 text-xs dark:text-white">
-              By {post.author}
+            <p className="text-gray-500 text-sm mt-2 dark:text-white">
+              By {post.author?.username || "Unknown Author"}
             </p>
 
-            <div className="flex gap-4 mt-4">
-              <button
-                onClick={() => navigate(`/edit/${post._id}`)}
-                className="bg-green-900 text-white px-2 py-1 rounded-lg hover:bg-green-600 transition cursor-pointer"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(post._id)}
-                className="bg-red-900 text-white px-2 py-1 rounded-lg hover:bg-red-600 transition cursor-pointer"
-              >
-                Delete
-              </button>
-            </div>
+            {/* Only show edit/delete buttons if user is the author */}
+            {user && user.id === post.author?._id && (
+              <div className="flex gap-4 mt-4">
+                <button
+                  onClick={() => navigate(`/edit/${post._id}`)}
+                  className="bg-green-900 text-white px-2 py-1 rounded-lg hover:bg-green-600 transition cursor-pointer"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(post._id)}
+                  className="bg-red-900 text-white px-2 py-1 rounded-lg hover:bg-red-600 transition cursor-pointer"
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         ))
       ) : (

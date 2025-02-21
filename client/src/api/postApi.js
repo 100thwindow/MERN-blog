@@ -2,6 +2,32 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/posts"; // Backend URL
 
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  // Check if token is expired
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (payload.exp * 1000 < Date.now()) {
+      localStorage.removeItem("token"); // Remove expired token
+      window.location.href = "/login"; // Redirect to login
+      throw new Error("Token expired");
+    }
+  } catch (error) {
+    localStorage.removeItem("token");
+    throw new Error("Invalid token");
+  }
+
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+
 // Get all posts
 export const getPosts = async () => {
   try {
@@ -25,34 +51,50 @@ export const getPostById = async (id) => {
 };
 
 // Create a new post
+
 export const createPost = async (postData) => {
   try {
-    const response = await axios.post(API_URL, postData);
+    const config = getAuthHeader();
+    console.log("Sending request with headers:", config); // Debug log
+    const response = await axios.post(API_URL, postData, config);
+    console.log("Server response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error creating post:", error);
-    return null;
+    if (error.response?.status === 401) {
+      console.error("Authentication error:", error.response.data);
+    } else {
+      console.error("Error creating post:", error);
+    }
+    throw error;
   }
 };
 
 // Update a post
 export const updatePost = async (id, updatedData) => {
   try {
-    const response = await axios.put(`${API_URL}/${id}`, updatedData);
+    const response = await axios.put(
+      `${API_URL}/${id}`,
+      updatedData,
+      getAuthHeader()
+    );
     return response.data;
   } catch (error) {
-    console.error("Error updating post:", error);
-    return null;
+    if (error.response?.status === 403) {
+      throw new Error("You can only edit your own posts");
+    }
+    throw error;
   }
 };
 
 // Delete a post
 export const deletePost = async (id) => {
   try {
-    await axios.delete(`${API_URL}/${id}`);
+    await axios.delete(`${API_URL}/${id}`, getAuthHeader());
     return true;
   } catch (error) {
-    console.error("Error deleting post:", error);
-    return false;
+    if (error.response?.status === 403) {
+      throw new Error("You can only delete your own posts");
+    }
+    throw error;
   }
 };
