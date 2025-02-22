@@ -12,7 +12,10 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(
-  cors({ origin: "https://mern-blog-gray-pi.vercel.app", credentials: true })
+  cors({
+    origin: ["https://mern-blog-gray-pi.vercel.app", "http://localhost:5173"],
+    credentials: true,
+  })
 );
 
 // Connect to MongoDB
@@ -20,6 +23,10 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
+
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working" });
+});
 
 // Use Routes
 app.use("/api/posts", postRoutes);

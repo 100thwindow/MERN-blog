@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.VITE_API_URL; // Backend URL
+const API_URL = `${import.meta.env.VITE_API_URL}/api/posts`; // Backend URL
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
