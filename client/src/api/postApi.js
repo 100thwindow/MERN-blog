@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/posts"; // Backend URL
+const API_URL = process.env.BACKEND_API; // Backend URL
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
