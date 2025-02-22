@@ -13,60 +13,38 @@ const Register = () => {
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Password validation
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match");
       return;
     }
 
-    if (formData.password.length < 6) {
-      setMessage("Password must be at least 6 characters long");
-      return;
-    }
-
     try {
-      // console.log("Submitting form data:", formData); // Debug log
-
       const result = await registerUser({
         username: formData.username,
         email: formData.email,
         password: formData.password,
       });
 
-      // console.log("Register result:", result); // Debug log
-
-      if (result.message) {
-        // Check for success message from server
+      if (result.success) {
         setMessage("Registration successful! Redirecting to login...");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      } else {
-        setMessage(result.error || "Registration failed");
+        setTimeout(() => navigate("/login"), 2000);
       }
     } catch (error) {
-      // console.error("Full error object:", error); // Debug log
-      setMessage(
-        error.response?.data?.error ||
-          error.message ||
-          "An unexpected error occurred"
-      );
+      setMessage(error.response?.data?.error || "An error occurred");
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">Register</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 border border-gray-200 dark:border-gray-700">
+        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
+          Register
+        </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
@@ -76,7 +54,10 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Username"
               required
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       placeholder-gray-500 dark:placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
           </div>
           <div>
@@ -87,7 +68,10 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Email"
               required
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       placeholder-gray-500 dark:placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
           </div>
           <div>
@@ -98,7 +82,10 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Password"
               required
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       placeholder-gray-500 dark:placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
           </div>
           <div>
@@ -109,12 +96,16 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Confirm Password"
               required
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       placeholder-gray-500 dark:placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg
+                     font-semibold transition duration-200 cursor-pointer"
           >
             Register
           </button>
@@ -122,17 +113,19 @@ const Register = () => {
         {message && (
           <p
             className={`mt-4 text-center ${
-              message.includes("successful") ? "text-green-600" : "text-red-600"
+              message.includes("successful")
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400"
             }`}
           >
             {message}
           </p>
         )}
-        <p className="mt-4 text-center text-gray-600">
+        <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
           Already have an account?{" "}
           <button
             onClick={() => navigate("/login")}
-            className="text-blue-500 hover:text-blue-600"
+            className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 cursor-pointer"
           >
             Login here
           </button>
