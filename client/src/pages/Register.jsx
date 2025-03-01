@@ -30,7 +30,7 @@ const Register = () => {
         password: formData.password,
       });
 
-      if (result.success) {
+      if (result.message) {
         console.log("Registration successful:", result);
         setMessage("You have successfully registered! Redirecting to login...");
         setTimeout(() => navigate("/login"), 2000);
