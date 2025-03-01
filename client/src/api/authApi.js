@@ -6,7 +6,7 @@ const API_URL = `${import.meta.env.VITE_API_URL}/api/auth`; // Backend URL
 export const registerUser = async (userData) => {
   try {
     // console.log("Sending registration data:", userData); // Debug log
-    const response = await axios.post(`${API_URL}/login`,
+    const response = await axios.post(`${API_URL}/register`,
       userData
     );
     //  console.log("Registration response:", response.data); // Debug log
