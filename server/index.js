@@ -26,6 +26,15 @@ mongoose
 
 app.get("/api/test", (req, res) => {
   res.json({ message: "API is working" });
+  
+});
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    ok: true,
+    status: "up",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Use Routes
