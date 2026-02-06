@@ -13,7 +13,10 @@ router.get("/", async (req, res) => {
       .sort({ createdAt: -1 }); // Sort by newest first
     res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    console.error("Error fetching posts:", error); // Debug log for Render logs
+    res
+      .status(500)
+      .json({ error: error.message || "Server error while fetching posts" });
   }
 });
 // GET a single post
